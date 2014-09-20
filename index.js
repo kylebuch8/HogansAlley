@@ -45,6 +45,8 @@ io.on('connection', function (socket) {
     
     socket.on('getDart', function () {
         var bytearray = new Uint8Array(globalBuffer);
+		var darts = [];
+		var targetPoint = {x: 320, y: 240};
         
         for (var i = 0; i < 307200; i += 1) {
             if (i % 640 >= 632) {
@@ -54,14 +56,29 @@ io.on('connection', function (socket) {
             
             if (bytearray[2 * i] === 255) {
                 console.log('white'); 
-                
-                var x = i % 640;
-                var y = Math.floor(i / 640);
 
-                console.log('x: ' + x + ' y: ' + y);
+				var point = { x: i % 640, y: Math.floor(i / 640)};
+
+                console.log('x: ' + point.x + ' y: ' + point.y);
+				console.log('distance from target: ' + lineDistance(point, targetPoint));
             }
         }
     });
+
+
+	function lineDistance( point1, point2 )
+	{
+		var xs = 0;
+		var ys = 0;
+
+		xs = point2.x - point1.x;
+		xs = xs * xs;
+
+		ys = point2.y - point1.y;
+		ys = ys * ys;
+
+		return Math.sqrt( xs + ys );
+	};
 });
 
 http.listen(3000, function () {
